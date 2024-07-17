@@ -1,27 +1,43 @@
 # Project Overview
 
-The collaborative-coding project is designed to facilitate teamwork and collaboration among developers working on backend development. This README.md file serves as the documentation for using the project effectively.
+The collaborative-coding project is designed to facilitate teamwork and collaboration among developers working on backend development.
+
 To effectively use the collaborative-coding project, follow these steps:
 
 1. Clone the repository:
     ```
-    git clone https://github.com/your-username/collaborative-coding.git
+    git clone https://github.com/zahidhasann88/collaborative-coding.git
     ```
 
 2. Install the required dependencies:
     ```
-    cd collaborative-coding
+    cd collaborative-coding-backend
+    npm install
+    cd collaborative-coding-frontend
     npm install
     ```
 
-3. Update the database configuration:
+3. Create the database and Update the database configuration:
+    - Open your preferred database management tool (pgAdmin).
+    - Create a new database with a suitable name for your collaborative-coding project.
+    - Run the sql query
+    ```bash
+    CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+    );
+    ```
     - Open the `src/auth/auth.ts` file in your collaborative-coding project.
     - Locate the database configuration section.
-    - Update the `host`, `port`, `username`, `password`, and `database` fields with the appropriate values for your database.
+    - Update the `host`, `port`, `username`, `password`, and `database` fields with the appropriate values for your database.,
 
-4. Start the backend server:
+4. Start the backend and frontend:
     ```
-    npm start
+    cd collaborative-coding-backend
+    npm run dev
+    cd collaborative-coding-frontend
+    npm run start
     ```
 
 5. Access the project in your browser:
@@ -42,16 +58,3 @@ To effectively use the collaborative-coding project, follow these steps:
 
 10. Enjoy collaborative coding:
      - Start collaborating with other developers, share knowledge, and build amazing projects together!
-
-11. Create the database:
-    - Open your preferred database management tool (pgAdmin).
-    - Create a new database with a suitable name for your collaborative-coding project.
-    - Make sure to note down the database credentials (e.g., host, port, username, password) for the next step.
-    - Run the sql query
-    ```bash
-    CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL
-    );
-    ```
