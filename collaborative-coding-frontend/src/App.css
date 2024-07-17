@@ -1,89 +1,85 @@
-/* styles.css */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
 
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-  margin: 0;
+.header {
+  background-color: #333;
+  padding: 10px;
+}
+
+.header ul {
+  list-style-type: none;
   padding: 0;
+  display: flex;
+  justify-content: space-around;
+}
+
+.header ul li a, .header ul li button {
+  color: white;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
+  flex-grow: 1;
   padding: 20px;
-}
-
-h2 {
-  color: #333;
-  margin-bottom: 20px;
-}
-
-input[type="text"],
-input[type="password"] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  background-color: white;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 4px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.file-manager {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.code-editor {
-  height: 600px;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .auth-form {
-  max-width: 400px;
+  max-width: 300px;
   margin: 0 auto;
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.message {
-  color: #28a745;
-  margin-top: 10px;
+.auth-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
-.error {
-  color: #dc3545;
+.auth-form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.file-manager, .code-editor {
+  margin-top: 20px;
+}
+
+
+.register-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.register-form {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.register-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.register-form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
 }

@@ -16,12 +16,31 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="register-form">
       <h2>Register</h2>
-      <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-      <button onClick={handleRegister}>Register</button>
-      <p>{message}</p>
+      <div className="input-container">
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
+        />
+      </div>
+      <div className="input-container">
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+        />
+      </div>
+      <button onClick={handleRegister}>
+        Register
+      </button>
+      <p className="message">{message}</p>
+      <p className="login-link">
+        Already have an account? <a href="/login">Login</a>
+      </p>
     </div>
   );
 };
