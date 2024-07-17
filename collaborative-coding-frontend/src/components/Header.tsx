@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
 interface HeaderProps {
   onLogout: () => void;
 }
@@ -10,8 +9,8 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
     <nav className="header">
       <ul>
         <li><Link to="/">CodeCollab</Link></li>
-        <li><button onClick={onLogout}>Logout</button></li>
       </ul>
+      <button onClick={onLogout}>Logout</button>
     </nav>
   );
 };

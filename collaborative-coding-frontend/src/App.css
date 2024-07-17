@@ -4,25 +4,52 @@ body{
   font-family: 'Arial', sans-serif;
 
 }
+/* Header.css */
 .header {
-  background-color: #333;
-  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  font-family: 'Arial', sans-serif;
 }
 
 .header ul {
   list-style-type: none;
-  padding: 0;
   display: flex;
-  justify-content: space-around;
+  margin: 0;
+  padding: 0;
 }
 
-.header ul li a, .header ul li button {
+.header li {
+  margin-right: 20px;
+}
+
+.header a {
   color: white;
   text-decoration: none;
-  background: none;
+  font-size: 18px;
+  transition: color 0.3s;
+}
+
+.header a:hover {
+  color: #d4d4d4;
+}
+
+.header button {
+  padding: 10px 15px;
+  background-color: #f44336;
   border: none;
+  border-radius: 5px;
+  color: white;
   cursor: pointer;
+  transition: background-color 0.3s;
   font-size: 16px;
+}
+
+.header button:hover {
+  background-color: #e53935;
 }
 
 /* Register.css */
