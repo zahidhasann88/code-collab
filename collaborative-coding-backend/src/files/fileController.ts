@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 const baseDir = path.join(__dirname, '../../files'); // Adjust path as needed
+const historyDir = path.join(__dirname, '../../history');
 
 export const listFiles = (req: Request, res: Response) => {
     console.log('Attempting to read directory:', baseDir);
@@ -56,5 +57,32 @@ export const saveFile = (req: Request, res: Response) => {
         return res.status(404).send('File not found');
       }
       res.json({ content: data });
+    });
+  };
+
+  export const saveFileVersion = (req: Request, res: Response) => {
+    const { filename, content } = req.body;
+    const timestamp = new Date().toISOString().replace(/:/g, '-');
+    const versionFilename = `${filename}.${timestamp}`;
+    
+    fs.writeFile(path.join(historyDir, versionFilename), content, (err) => {
+      if (err) {
+        return res.status(500).send('Unable to save file version');
+      }
+      res.send('File version saved successfully');
+    });
+  };
+  
+  export const getFileVersions = (req: Request, res: Response) => {
+    const { filename } = req.params;
+    
+    fs.readdir(historyDir, (err, files) => {
+      if (err) {
+        return res.status(500).send('Unable to read file versions');
+      }
+      const versions = files
+        .filter(file => file.startsWith(filename))
+        .sort((a, b) => b.localeCompare(a));
+      res.json(versions);
     });
   };

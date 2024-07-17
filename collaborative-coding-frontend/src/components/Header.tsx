@@ -9,7 +9,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
   return (
     <nav className="header">
       <ul>
-        <li><Link to="/">Code Editor</Link></li>
+        <li><Link to="/">CodeCollab</Link></li>
         <li><button onClick={onLogout}>Logout</button></li>
       </ul>
     </nav>

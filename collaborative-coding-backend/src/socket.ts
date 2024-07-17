@@ -19,5 +19,10 @@ export const setupSocket = (io: Server) => {
     socket.on('code change', (data: { filename: string, code: string }) => {
       socket.broadcast.emit('code change', data);
     });
+
+    socket.on('cursor move', (data: { username: string, position: number }) => {
+      // Broadcast to other clients
+      socket.broadcast.emit('cursor move', data);
+    });
   });
 };

@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import CodeMirror from '@uiw/react-codemirror';
+import React, { useState, useEffect, useCallback } from 'react';
+import CodeMirror, { ViewUpdate } from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
+import { python } from '@codemirror/lang-python';
+import { cpp } from '@codemirror/lang-cpp';
+import { java } from '@codemirror/lang-java';
+import { EditorView } from '@codemirror/view';
 import axios from 'axios';
 import socket from '../utils/socket';
 
@@ -10,30 +14,22 @@ const CodeEditorWithFileManager: React.FC = () => {
   const [message, setMessage] = useState('');
   const [code, setCode] = useState('');
   const [currentFile, setCurrentFile] = useState('');
+  const [language, setLanguage] = useState('javascript');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [cursors, setCursors] = useState<{[key: string]: number}>({});
+  const [versions, setVersions] = useState<string[]>([]);
 
-//   useEffect(() => {
-//     fetchFiles();
-//     socket.on('code change', (newCode: string) => {
-//       setCode(newCode);
-//     });
-//     return () => {
-//       socket.off('code change');
-//     };
-//   }, []);
+  const getLanguageExtension = useCallback((lang: string) => {
+    switch (lang) {
+      case 'javascript': return javascript();
+      case 'python': return python();
+      case 'cpp': return cpp();
+      case 'java': return java();
+      default: return javascript();
+    }
+  }, []);
 
-useEffect(() => {
-    fetchFiles();
-    socket.on('code change', (data: { filename: string, code: string }) => {
-      if (data.filename === currentFile) {
-        setCode(data.code);
-      }
-    });
-    return () => {
-      socket.off('code change');
-    };
-  }, [currentFile]);
-
-  const fetchFiles = async () => {
+  const fetchFiles = useCallback(async () => {
     try {
       const response = await axios.get('http://localhost:3001/files', {
         headers: {
@@ -44,6 +40,37 @@ useEffect(() => {
     } catch (error) {
       console.error('Error fetching files', error);
       setMessage('Failed to fetch files');
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchFiles();
+    
+    socket.on('code change', (data: { filename: string, code: string }) => {
+      if (data.filename === currentFile) {
+        setCode(data.code);
+      }
+    });
+
+    socket.on('cursor move', (data: { username: string, position: number }) => {
+      setCursors(prev => ({ ...prev, [data.username]: data.position }));
+    });
+
+    return () => {
+      socket.off('code change');
+      socket.off('cursor move');
+    };
+  }, [currentFile, fetchFiles]);
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setLanguage(e.target.value);
+  };
+
+  const handleCursorActivity = (update: ViewUpdate) => {
+    if (update.docChanged || update.selectionSet) {
+      const view = update.view;
+      const position = view.state.selection.main.head;
+      socket.emit('cursor move', { username: localStorage.getItem('username'), position });
     }
   };
 
@@ -83,37 +110,32 @@ useEffect(() => {
     }
   };
 
-//   const handleFileSelect = async (file: string) => {
-//     try {
-//       const response = await axios.get(`http://localhost:3001/files/${file}`, {
-//         headers: {
-//           'x-access-token': localStorage.getItem('token') || ''
-//         }
-//       });
-//       setCurrentFile(file);
-//       setCode(response.data.content);
-//     } catch (error) {
-//       console.error('Error fetching file content', error);
-//       setMessage('Failed to fetch file content');
-//     }
-//   };
+  const handleSaveVersion = async () => {
+    try {
+      await axios.post('http://localhost:3001/files/version', 
+        { filename: currentFile, content: code },
+        { headers: { 'x-access-token': localStorage.getItem('token') || '' } }
+      );
+      setMessage('File version saved successfully');
+      fetchVersions();
+    } catch (error) {
+      console.error('Error saving file version', error);
+      setMessage('Failed to save file version');
+    }
+  };
 
-// const handleFileSelect = async (file: string) => {
-//     try {
-//       const response = await axios.get(`http://localhost:3001/files/${file}`, {
-//         headers: {
-//           'x-access-token': localStorage.getItem('token') || ''
-//         }
-//       });
-//       setCurrentFile(file);
-//       setCode(response.data.content);
-//     } catch (error) {
-//       console.error('Error fetching file content', error);
-//       setMessage('Failed to fetch file content');
-//     }
-//   };
+  const fetchVersions = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3001/files/${currentFile}/versions`, {
+        headers: { 'x-access-token': localStorage.getItem('token') || '' }
+      });
+      setVersions(response.data);
+    } catch (error) {
+      console.error('Error fetching file versions', error);
+    }
+  };
 
-const handleFileSelect = async (file: string) => {
+  const handleFileSelect = async (file: string) => {
     try {
       const response = await axios.get(`http://localhost:3001/files/${file}`, {
         headers: {
@@ -128,11 +150,7 @@ const handleFileSelect = async (file: string) => {
     }
   };
 
-//   const handleCodeChange = (value: string) => {
-//     setCode(value);
-//     socket.emit('code change', value);
-//   };
-const handleCodeChange = (value: string) => {
+  const handleCodeChange = (value: string) => {
     setCode(value);
     socket.emit('code change', { filename: currentFile, code: value });
   };
@@ -151,10 +169,23 @@ const handleCodeChange = (value: string) => {
     }
   };
 
+  const filteredFiles = files.filter(file => 
+    file.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="code-editor-with-file-manager">
       <div className="file-manager">
         <h2>File Manager</h2>
+        <div className="version-history">
+          <h3>Version History</h3>
+          <button onClick={handleSaveVersion}>Save Version</button>
+          <ul>
+            {versions.map(version => (
+              <li key={version}>{version}</li>
+            ))}
+          </ul>
+        </div>
         <input
           type="text"
           value={filename}
@@ -164,8 +195,15 @@ const handleCodeChange = (value: string) => {
         <button onClick={handleCreateFile}>Create File</button>
         <button onClick={handleSaveFile}>Save</button>
         <p>{message}</p>
+        <input
+          type="text"
+          placeholder="Search files..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-input"
+        />
         <ul>
-          {files.map((file) => (
+          {filteredFiles.map((file) => (
             <li key={file}>
               <span onClick={() => handleFileSelect(file)}>{file}</span>
               <button onClick={() => handleDeleteFile(file)}>Delete</button>
@@ -175,12 +213,20 @@ const handleCodeChange = (value: string) => {
       </div>
       <div className="code-editor">
         <h2>Code Editor {currentFile && `- ${currentFile}`}</h2>
+        <select value={language} onChange={handleLanguageChange} title='Select'>
+          <option value="javascript">JavaScript</option>
+          <option value="python">Python</option>
+          <option value="cpp">C++</option>
+          <option value="java">Java</option>
+        </select>
         <CodeMirror
-          value={code}
-          extensions={[javascript()]}
-          theme="dark"
-          onChange={handleCodeChange}
-        />
+            value={code}
+            extensions={[getLanguageExtension(language)]}
+            theme="dark"
+            onChange={handleCodeChange}
+            onUpdate={handleCursorActivity}
+            className="codemirror-wrapper"
+            />
       </div>
     </div>
   );
