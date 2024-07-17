@@ -35,3 +35,26 @@ export const deleteFile = (req: Request, res: Response) => {
     res.send('File deleted successfully');
   });
 };
+
+export const saveFile = (req: Request, res: Response) => {
+    const { filename, content } = req.body;
+    fs.writeFile(path.join(baseDir, filename), content, (err) => {
+      if (err) {
+        return res.status(500).send('Unable to save file');
+      }
+      res.send('File saved successfully');
+    });
+  };
+
+  export const getFileContent = (req: Request, res: Response) => {
+    const filename = req.params.filename;
+    const filePath = path.join(baseDir, filename);
+  
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        console.error('Error reading file:', err);
+        return res.status(404).send('File not found');
+      }
+      res.json({ content: data });
+    });
+  };

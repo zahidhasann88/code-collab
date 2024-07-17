@@ -7,7 +7,7 @@ import path from 'path';
 import { setupSocket } from './socket';
 import { registerUser, authenticateUser } from './auth/auth';
 import { authMiddleware } from './auth/middleware';
-import { listFiles, createFile, deleteFile } from './files/fileController';
+import { listFiles, createFile, deleteFile, getFileContent, saveFile } from './files/fileController';
 
 const baseDir = path.join(__dirname, '../files');
 if (!fs.existsSync(baseDir)) {
@@ -57,6 +57,8 @@ app.get('/', (req, res) => {
   res.send('Collaborative Coding Environment Backend');
 });
 
+app.post('/files/save', authMiddleware, saveFile);
+app.get('/files/:filename', authMiddleware, getFileContent);
 app.get('/files', listFiles);
 app.post('/files', createFile);
 app.delete('/files', deleteFile);

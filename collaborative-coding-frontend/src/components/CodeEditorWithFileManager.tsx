@@ -11,15 +11,27 @@ const CodeEditorWithFileManager: React.FC = () => {
   const [code, setCode] = useState('');
   const [currentFile, setCurrentFile] = useState('');
 
-  useEffect(() => {
+//   useEffect(() => {
+//     fetchFiles();
+//     socket.on('code change', (newCode: string) => {
+//       setCode(newCode);
+//     });
+//     return () => {
+//       socket.off('code change');
+//     };
+//   }, []);
+
+useEffect(() => {
     fetchFiles();
-    socket.on('code change', (newCode: string) => {
-      setCode(newCode);
+    socket.on('code change', (data: { filename: string, code: string }) => {
+      if (data.filename === currentFile) {
+        setCode(data.code);
+      }
     });
     return () => {
       socket.off('code change');
     };
-  }, []);
+  }, [currentFile]);
 
   const fetchFiles = async () => {
     try {
@@ -71,7 +83,37 @@ const CodeEditorWithFileManager: React.FC = () => {
     }
   };
 
-  const handleFileSelect = async (file: string) => {
+//   const handleFileSelect = async (file: string) => {
+//     try {
+//       const response = await axios.get(`http://localhost:3001/files/${file}`, {
+//         headers: {
+//           'x-access-token': localStorage.getItem('token') || ''
+//         }
+//       });
+//       setCurrentFile(file);
+//       setCode(response.data.content);
+//     } catch (error) {
+//       console.error('Error fetching file content', error);
+//       setMessage('Failed to fetch file content');
+//     }
+//   };
+
+// const handleFileSelect = async (file: string) => {
+//     try {
+//       const response = await axios.get(`http://localhost:3001/files/${file}`, {
+//         headers: {
+//           'x-access-token': localStorage.getItem('token') || ''
+//         }
+//       });
+//       setCurrentFile(file);
+//       setCode(response.data.content);
+//     } catch (error) {
+//       console.error('Error fetching file content', error);
+//       setMessage('Failed to fetch file content');
+//     }
+//   };
+
+const handleFileSelect = async (file: string) => {
     try {
       const response = await axios.get(`http://localhost:3001/files/${file}`, {
         headers: {
@@ -86,9 +128,27 @@ const CodeEditorWithFileManager: React.FC = () => {
     }
   };
 
-  const handleCodeChange = (value: string) => {
+//   const handleCodeChange = (value: string) => {
+//     setCode(value);
+//     socket.emit('code change', value);
+//   };
+const handleCodeChange = (value: string) => {
     setCode(value);
-    socket.emit('code change', value);
+    socket.emit('code change', { filename: currentFile, code: value });
+  };
+
+  const handleSaveFile = async () => {
+    try {
+      await axios.post('http://localhost:3001/files/save', { filename: currentFile, content: code }, {
+        headers: {
+          'x-access-token': localStorage.getItem('token') || ''
+        }
+      });
+      setMessage('File saved successfully');
+    } catch (error) {
+      console.error('Error saving file', error);
+      setMessage('Failed to save file');
+    }
   };
 
   return (
@@ -102,6 +162,7 @@ const CodeEditorWithFileManager: React.FC = () => {
           placeholder="Filename"
         />
         <button onClick={handleCreateFile}>Create File</button>
+        <button onClick={handleSaveFile}>Save</button>
         <p>{message}</p>
         <ul>
           {files.map((file) => (
