@@ -2,10 +2,18 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
 import { setupSocket } from './socket';
 import { registerUser, authenticateUser } from './auth/auth';
 import { authMiddleware } from './auth/middleware';
 import { listFiles, createFile, deleteFile } from './files/fileController';
+
+const baseDir = path.join(__dirname, '../files');
+if (!fs.existsSync(baseDir)) {
+  console.log('Creating files directory:', baseDir);
+  fs.mkdirSync(baseDir, { recursive: true });
+}
 
 const app = express();
 const server = http.createServer(app);

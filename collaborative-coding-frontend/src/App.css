@@ -30,6 +30,48 @@
   padding: 20px;
 }
 
+.code-editor-with-file-manager {
+  display: flex;
+  height: calc(100vh - 100px);
+}
+
+.file-manager {
+  width: 300px;
+  padding: 20px;
+  border-right: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+.file-manager ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.file-manager li {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.file-manager span {
+  cursor: pointer;
+}
+
+.code-editor {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.code-editor .cm-editor {
+  height: calc(100% - 40px);
+}
+
+.container {
+  flex-grow: 1;
+  padding: 20px;
+}
+
 .auth-form {
   max-width: 300px;
   margin: 0 auto;

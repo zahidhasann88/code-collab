@@ -3,8 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import PrivateRoute from './components/Auth/PrivateRoute';
-import CodeEditor from './components/CodeEditor';
-import FileManager from './components/Files/FileManager';
+import CodeEditorWithFileManager from './components/CodeEditorWithFileManager';
 import Header from './components/Header';
 import './App.css';
 
@@ -29,18 +28,10 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
             <Route path="/register" element={<Register />} />
             <Route 
-              path="/files" 
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <FileManager />
-                </PrivateRoute>
-              } 
-            />
-            <Route 
               path="/" 
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <CodeEditor />
+                  <CodeEditorWithFileManager />
                 </PrivateRoute>
               } 
             />

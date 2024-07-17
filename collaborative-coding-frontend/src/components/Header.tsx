@@ -10,7 +10,6 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
     <nav className="header">
       <ul>
         <li><Link to="/">Code Editor</Link></li>
-        <li><Link to="/files">File Manager</Link></li>
         <li><button onClick={onLogout}>Logout</button></li>
       </ul>
     </nav>
